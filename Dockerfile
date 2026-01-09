@@ -9,11 +9,15 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    PIP_DEFAULT_TIMEOUT=600
+    PIP_DEFAULT_TIMEOUT=600 \
+    PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # 换源加快下载速度
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
     sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+# --- 缓存破坏者：确保 Docker 重新执行后续步骤 ---
+ARG CACHE_BUST=1
 
 # 安装系统依赖（增强版，包含 Python 3.11 和常用库）
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -23,7 +27,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.11 \
     python3.11-dev \
     python3.11-distutils \
-    python3-pip \
     git \
     wget \
     curl \
@@ -37,11 +40,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# 创建 Python 3.11 符号链接
-RUN ln -sf /usr/bin/python3.11 /usr/bin/python && \
+# 彻底替换系统 Python
+RUN rm -f /usr/bin/python3 && \
+    ln -sf /usr/bin/python3.11 /usr/bin/python && \
     ln -sf /usr/bin/python3.11 /usr/bin/python3
 
-# 安装并升级 pip (针对 Python 3.11)
+# 使用 Python 3.11 官方安装最新的 pip，并确保全局唯一
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 && \
     python3.11 -m pip install --no-cache-dir --upgrade pip && \
     python3.11 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
