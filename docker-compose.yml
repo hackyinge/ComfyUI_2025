@@ -1,0 +1,36 @@
+services:
+  comfyui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: comfyui-service
+    ports:
+      - "8188:8188"
+    volumes:
+      # 挂载模型目录，避免每次重启重新下载
+      - ./models:/app/ComfyUI/models
+      # 挂载输出目录
+      - ./output:/app/ComfyUI/output
+      # 挂载输入目录
+      - ./input:/app/ComfyUI/input
+      # 挂载自定义节点目录（可选，用于持久化安装的自定义节点）
+      - ./custom_nodes:/app/ComfyUI/custom_nodes
+      # 挂载用户配置目录
+      - ./user:/app/ComfyUI/user
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      # ComfyUI 配置
+      - CLI_ARGS=--listen 0.0.0.0 --port 8188
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    # 增加共享内存大小，避免 PyTorch DataLoader 问题
+    shm_size: 30g

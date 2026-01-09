@@ -1,0 +1,146 @@
+╔════════════════════════════════════════════════════════════════════════╗
+║                   ComfyUI Docker 项目创建成功！                        ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+📍 项目位置: /mnt/sda/ComfyUI_2025
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 已创建的文件:
+
+  🐳 Docker 配置文件:
+    ├── Dockerfile (2.3K)              - CUDA 12.4 + PyTorch 镜像配置
+    ├── docker-compose.yml (1.1K)      - GPU 支持的服务配置
+    └── entrypoint.sh (743B)           - 容器启动脚本
+
+  🚀 启动脚本:
+    └── start.sh (1.9K)                - 一键启动脚本（推荐使用）
+
+  📚 文档文件:
+    ├── README.md (4.5K)               - 完整项目说明
+    ├── USAGE.md (7.2K)                - 详细使用指南
+    ├── QUICKREF.md (1.8K)             - 快速参考卡
+    └── CHANGELOG.md (2.5K)            - 更新日志
+
+  📁 数据目录:
+    ├── models/                        - 模型文件目录
+    │   ├── checkpoints/               - SD 模型
+    │   ├── vae/                       - VAE 模型
+    │   ├── loras/                     - LoRA 模型
+    │   ├── controlnet/                - ControlNet 模型
+    │   ├── clip/                      - CLIP 模型
+    │   ├── unet/                      - UNet 模型
+    │   └── embeddings/                - Embedding 模型
+    ├── output/                        - 生成的图片输出
+    ├── input/                         - 输入文件
+    ├── custom_nodes/                  - 自定义节点
+    └── user/                          - 用户配置
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ 项目特性:
+
+  ✅ 基于 NVIDIA CUDA 12.4，完美支持 RTX 4090
+  ✅ 自动从 GitHub 克隆 ComfyUI 主程序
+  ✅ 自动安装 ComfyUI-Manager 扩展管理器
+  ✅ 使用 PyTorch 2.3.1 + CUDA 12.1
+  ✅ 数据持久化（模型、输出、配置不会丢失）
+  ✅ 使用阿里云镜像源加速下载
+  ✅ 支持 GPU 加速推理
+  ✅ 预创建所有模型目录
+  ✅ 设置 8GB 共享内存
+  ✅ 完整的中文文档
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 快速开始:
+
+  方法一：使用启动脚本（推荐）
+    cd /mnt/sda/ComfyUI_2025
+    ./start.sh
+
+  方法二：手动启动
+    cd /mnt/sda/ComfyUI_2025
+    docker compose build
+    docker compose up -d
+
+  访问地址:
+    http://localhost:8188
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 文档说明:
+
+  README.md      - 完整的项目说明，包含安装、配置、故障排除
+  USAGE.md       - 详细的使用指南，包含模型管理、工作流示例
+  QUICKREF.md    - 快速参考卡，常用命令和配置一览
+  CHANGELOG.md   - 更新日志，记录版本变更
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💻 常用命令:
+
+  启动服务:    docker compose up -d
+  停止服务:    docker compose down
+  重启服务:    docker compose restart
+  查看日志:    docker compose logs -f
+  进入容器:    docker compose exec comfyui bash
+  查看 GPU:    docker compose exec comfyui nvidia-smi
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📥 添加模型:
+
+  1. 下载模型文件（.safetensors 或 .ckpt）
+  2. 放入对应目录:
+     - SD 模型 → models/checkpoints/
+     - LoRA → models/loras/
+     - VAE → models/vae/
+  3. 在 ComfyUI 界面点击 Refresh 或重启服务
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 技术栈:
+
+  基础镜像:    nvidia/cuda:12.4.0-devel-ubuntu22.04
+  Python:      3.10
+  PyTorch:     2.3.1 (CUDA 12.1)
+  ComfyUI:     Latest (from GitHub)
+  Manager:     ComfyUI-Manager (from GitHub)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  注意事项:
+
+  1. 首次构建镜像需要 10-20 分钟，请耐心等待
+  2. 确保已安装 Docker、Docker Compose 和 NVIDIA 驱动
+  3. 确保已安装 NVIDIA Container Toolkit
+  4. 模型文件会占用大量磁盘空间，请预留足够空间
+  5. RTX 4090 建议使用 --highvram 参数以获得最佳性能
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 下一步:
+
+  1. 运行 ./start.sh 启动服务
+  2. 访问 http://localhost:8188
+  3. 使用 ComfyUI-Manager 安装自定义节点
+  4. 下载或添加 SD 模型到 models/checkpoints/
+  5. 开始创作！
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 参考资源:
+
+  ComfyUI:         https://github.com/comfyanonymous/ComfyUI
+  ComfyUI-Manager: https://github.com/Comfy-Org/ComfyUI-Manager
+  工作流示例:      https://comfyanonymous.github.io/ComfyUI_examples/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ 项目创建完成！准备就绪！
+
+   运行以下命令开始使用:
+   cd /mnt/sda/ComfyUI_2025 && ./start.sh
+
+╚════════════════════════════════════════════════════════════════════════╝

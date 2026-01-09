@@ -1,0 +1,45 @@
+# 模型文件
+models/
+*.ckpt
+*.safetensors
+*.pt
+*.pth
+*.bin
+
+# 输出文件
+output/
+input/
+
+# 自定义节点（除了预装的）
+custom_nodes/*
+!custom_nodes/.gitkeep
+
+# 用户配置
+user/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log
