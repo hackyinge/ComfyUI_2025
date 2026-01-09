@@ -15,7 +15,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
     sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
-# 安装系统依赖
+# 安装系统依赖（增强版，包含更多常用插件所需的底层库）
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.10 \
     python3-pip \
@@ -26,14 +26,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libgl1-mesa-glx \
     libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    ffmpeg \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 # 创建符号链接
 RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
     ln -sf /usr/bin/pip3 /usr/bin/pip
 
-# 升级 pip
-RUN pip install --no-cache-dir --upgrade pip
+# 升级 pip 并配置清华源加速
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 克隆 ComfyUI 仓库
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git /app/ComfyUI
@@ -41,21 +47,25 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git /app/ComfyUI
 # 设置工作目录为 ComfyUI
 WORKDIR /app/ComfyUI
 
-# 安装 PyTorch 和相关依赖（CUDA 12.1 版本，兼容 RTX 4090）
+# 安装 PyTorch 和相关依赖（RTX 4090 推荐使用 cu121 或以上）
 RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-# 安装 ComfyUI 依赖
+# 安装 ComfyUI 基础依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 克隆 ComfyUI-Manager 到 custom_nodes 目录
+# --- 处理自定义节点依赖 ---
+# 1. 克隆 ComfyUI-Manager (必备)
 RUN mkdir -p /app/ComfyUI/custom_nodes && \
     cd /app/ComfyUI/custom_nodes && \
     git clone https://github.com/ltdrdata/ComfyUI-Manager.git
 
-# 安装 ComfyUI-Manager 依赖
-RUN if [ -f /app/ComfyUI/custom_nodes/ComfyUI-Manager/requirements.txt ]; then \
-        pip install --no-cache-dir -r /app/ComfyUI/custom_nodes/ComfyUI-Manager/requirements.txt; \
-    fi
+# 2. 自动化安装已存在的自定义节点依赖 (通用扫描逻辑)
+RUN for req in /app/ComfyUI/custom_nodes/*/requirements.txt; do \
+    if [ -f "$req" ]; then \
+    echo "Installing dependencies for: $(dirname $req)..."; \
+    pip install --no-cache-dir -r "$req"; \
+    fi; \
+    done
 
 # 创建必要的目录
 RUN mkdir -p /app/ComfyUI/models/checkpoints \
