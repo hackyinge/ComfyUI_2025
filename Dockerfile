@@ -52,11 +52,11 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git /app/ComfyUI
 # 设置工作目录为 ComfyUI
 WORKDIR /app/ComfyUI
 
-# 安装 PyTorch 和相关依赖（RTX 4090 推荐使用 cu121 或以上）
-RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+# 安装 PyTorch 和相关依赖（显式使用 python3 即 3.11）
+RUN python3 -m pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # 安装 ComfyUI 基础依赖
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
 # --- 处理自定义节点依赖 ---
 # 1. 克隆 ComfyUI-Manager (必备)
@@ -68,7 +68,7 @@ RUN mkdir -p /app/ComfyUI/custom_nodes && \
 RUN for req in /app/ComfyUI/custom_nodes/*/requirements.txt; do \
     if [ -f "$req" ]; then \
     echo "Installing dependencies for: $(dirname $req)..."; \
-    pip install --no-cache-dir -r "$req"; \
+    python3 -m pip install --no-cache-dir -r "$req"; \
     fi; \
     done
 
