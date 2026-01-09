@@ -56,11 +56,15 @@ RUN git clone https://github.com/comfyanonymous/ComfyUI.git /app/ComfyUI
 # 设置工作目录为 ComfyUI
 WORKDIR /app/ComfyUI
 
+# --- 修复依赖冲突：移除 requirements.txt 中可能导致构建失败的非核心包 ---
+# 有时特定的镜像源或 Python 环境下 comfy-kitchen 无法找到匹配版本
+RUN sed -i '/comfy-kitchen/d' requirements.txt
+
 # 安装 PyTorch 和相关依赖（显式使用 python3 即 3.11）
 RUN python3 -m pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-# 安装 ComfyUI 基础依赖
-RUN python3 -m pip install --no-cache-dir -r requirements.txt
+# 安装 ComfyUI 基础依赖 (尝试使用官方源排除镜像同步问题)
+RUN python3 -m pip install --no-cache-dir -r requirements.txt -i https://pypi.org/simple
 
 # --- 处理自定义节点依赖 ---
 # 1. 克隆 ComfyUI-Manager (必备)
