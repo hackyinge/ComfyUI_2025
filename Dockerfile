@@ -15,11 +15,15 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
     sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
-# 安装系统依赖（增强版，包含更多常用插件所需的底层库）
+# 安装系统依赖（增强版，包含 Python 3.11 和常用库）
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.10 \
+    software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    python3.11 \
+    python3.11-dev \
+    python3.11-distutils \
     python3-pip \
-    python3.10-dev \
     git \
     wget \
     curl \
@@ -33,13 +37,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# 创建符号链接
-RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
-    ln -sf /usr/bin/pip3 /usr/bin/pip
+# 创建 Python 3.11 符号链接
+RUN ln -sf /usr/bin/python3.11 /usr/bin/python && \
+    ln -sf /usr/bin/python3.11 /usr/bin/python3
 
-# 升级 pip 并配置清华源加速
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+# 安装并升级 pip (针对 Python 3.11)
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python3.11 && \
+    python3.11 -m pip install --no-cache-dir --upgrade pip && \
+    python3.11 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 克隆 ComfyUI 仓库
 RUN git clone https://github.com/comfyanonymous/ComfyUI.git /app/ComfyUI
