@@ -68,9 +68,12 @@ RUN python3 -m pip install --no-cache-dir -r requirements.txt -i https://pypi.or
 
 # --- 处理自定义节点依赖 ---
 # 1. 克隆 ComfyUI-Manager (必备)
+# 使用 --depth 1 减少体积，增加重试机制应对网络抖动
 RUN mkdir -p /app/ComfyUI/custom_nodes && \
     cd /app/ComfyUI/custom_nodes && \
-    git clone https://github.com/ltdrdata/ComfyUI-Manager.git
+    (git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git || \
+    git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git || \
+    git clone --depth 1 https://github.com/ltdrdata/ComfyUI-Manager.git)
 
 # 2. 自动化安装已存在的自定义节点依赖 (通用扫描逻辑)
 RUN for req in /app/ComfyUI/custom_nodes/*/requirements.txt; do \
